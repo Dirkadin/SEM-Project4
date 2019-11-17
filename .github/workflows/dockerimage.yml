@@ -10,6 +10,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build the Docker image
+    - name: Build monitoring-service Docker image
       working-directory: ./monitoring-service
+      run: docker build . --file Dockerfile --tag monitoring-service:$(date +%s)
+    - name: Build ordering-service Docker image
+      working-directory: ./ordering-service
       run: docker build . --file Dockerfile --tag monitoring-service:$(date +%s)
