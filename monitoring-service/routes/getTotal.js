@@ -15,7 +15,7 @@ router.get('/', function (req, res, next) {
         ['cookie', 6]
     ]);
     let line;
-    var total;
+    let total;
     var item;
     var quantity;
 
@@ -39,13 +39,13 @@ router.get('/', function (req, res, next) {
 
     res.render('test', {title: 'Get Total', message: total});
 
-    lineReader.open('logs/orders.log', function(reader) {
-        if (reader.hasNextLine()) {
-            reader.nextLine(function(line) {
-                console.log(line);
-            });
-        }
-    });
+//    lineReader.open('logs/orders.log', function(reader) {
+//        if (reader.hasNextLine()) {
+//            reader.nextLine(function(line) {
+//                console.log(line);
+//            });
+//       }
+//    });
 });
 
 module.exports = router;
