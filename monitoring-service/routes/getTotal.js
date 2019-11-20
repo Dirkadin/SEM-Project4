@@ -1,27 +1,52 @@
 var express = require('express');
 var router = express.Router();
-const lineByLine = require('n-readlines');
-const liner = new lineByLine('logs/orders.log');
+const lineReader = require('line-reader');
 const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
 
+
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     //reports back the total amount of earnings seen thus far.
-
-    let prices = [['hotdog', 20], ['hamburger', 35], ['soda', 4], ['cookie', 6]];
+    var prices = new Map([
+        ['hotdog', 20],
+        ['hamburger', 35],
+        ['soda', 4],
+        ['cookie', 6]
+    ]);
     let line;
-    var total = 0;
+    var total;
+    var item;
+    var quantity;
 
-    while (line = liner.next()) {
+    log.info("made it here");
+
+    lineReader.eachLine('logs/orders.log', function(line) {
+        //log.info("line ingested");
+
         var str = line.split(' ');
-        var item = str[2];
-        var quantity = str[3];
+        item = str[3];
+        quantity = str[4];
 
-        total += prices.get(item) * quantity;
-    }
+        //log.info(item.toString());
+        //log.info(quantity.toString());
+        //log.info(prices.get(item));
 
+        total = Number(total + prices.get(item) * quantity);
+        // log.info("" + total);
+    });
 
-    res.render('test', { title: 'Get Total', message:total });
+    // log.info("" + total);
+
+    res.render('test', {title: 'Get Total', message: total.toString()});
+
+    lineReader.open('logs/orders.log', function(reader) {
+        if (reader.hasNextLine()) {
+            reader.nextLine(function(line) {
+                console.log(line);
+            });
+        }
+    });
 });
 
 module.exports = router;
