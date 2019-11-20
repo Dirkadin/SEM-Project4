@@ -28,17 +28,16 @@ router.get('/', function (req, res, next) {
         item = str[3];
         quantity = str[4];
 
-        //log.info(item.toString());
-        //log.info(quantity.toString());
-        //log.info(prices.get(item));
+        log.info(item);
+        log.info(quantity);
+        log.info(prices.get(item));
 
-        total = Number(total + prices.get(item) * quantity);
-        // log.info("" + total);
+        total = total + prices.get(item) * quantity;
     });
 
-    // log.info("" + total);
+    log.info("" + total);
 
-    res.render('test', {title: 'Get Total', message: total.toString()});
+    res.render('test', {title: 'Get Total', message: total});
 
     lineReader.open('logs/orders.log', function(reader) {
         if (reader.hasNextLine()) {
