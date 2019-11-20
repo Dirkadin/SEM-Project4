@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build Monitoring') {
       steps {
-        sh '''cd monitoring-service
+        sh '''cd ordering-service
 chmod +x startup.sh
 ./startup.sh'''
       }
