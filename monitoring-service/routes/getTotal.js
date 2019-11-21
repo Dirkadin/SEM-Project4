@@ -3,9 +3,6 @@ var router = express.Router();
 const lineReader = require('line-reader');
 const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
 
-
-
-/* GET home page. */
 router.get('/', function (req, res, next) {
     //reports back the total amount of earnings seen thus far.
     var prices = new Map([
@@ -15,7 +12,7 @@ router.get('/', function (req, res, next) {
         ['cookie', 6]
     ]);
     let line;
-    let total;
+    let total = 0;
     var item;
     var quantity;
 
