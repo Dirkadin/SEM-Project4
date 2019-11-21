@@ -3,11 +3,8 @@ pipeline {
   stages {
     stage('Build Ordering') {
       steps {
-	echo pwd
-        sh "cd ordering-service"
-	echo pwd
-        sh "chmod +x startup.sh"
-        sh "./startup.sh"
+        sh "chmod +x /ordering-service/startup.sh"
+        sh "./ordering-service/startup.sh"
       }
     }
     stage('Build Monitoring') {
