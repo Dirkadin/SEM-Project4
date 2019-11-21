@@ -11,7 +11,7 @@ router.get('/', function (req, res, next) {
         ['soda', 4],
         ['cookie', 6]
     ]);
-    let line;
+    
     let total = 0;
     var item;
     var quantity;
