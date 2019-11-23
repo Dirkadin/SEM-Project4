@@ -7,7 +7,7 @@ services:
     ports:
             - "80:3000"
     volumes:
-      - hotburger-logs:/ordering-service/logs
+      - hotburger-logs:/SEM-Project3/ordering-service/logs
 
   monitoring-service:
     build: ./monitoring-service
@@ -16,7 +16,7 @@ services:
     ports:
             - "8080:3001"
     volumes:
-      - hotburger-logs:/monitoring-service/logs
+      - hotburger-logs:/SEM-Project3/monitoring-service/logs
 
 volumes:
-        hotburger-logs:
+        hotburger-logs: {}
