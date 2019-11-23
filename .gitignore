@@ -1,2 +1,4 @@
 */node_modules/*
 .idea/*
+ordering-service/logs*
+monitoring-service/logs*
