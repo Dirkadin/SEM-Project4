@@ -6,7 +6,7 @@ const fs = require('fs');
 router.get('/', function(req, res, next) {
     log.info('GET /getlastrequesttime');
 
-    var data = fs.readFileSync('./logs/events.log');
+    var data = fs.readFileSync('logs/events.log');
     var content = data.toString();
     var events = content.split('\n');
     

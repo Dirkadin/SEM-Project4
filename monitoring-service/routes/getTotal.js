@@ -15,7 +15,7 @@ var prices = new Map([
 
 router.get('/', function (req, res, next) {
     log.info('GET /gettotal');
-    var data = fs.readFileSync('./logs/orders.log');
+    var data = fs.readFileSync('logs/orders.log');
 
     var content = data.toString();
     var orders = content.split('\n');
