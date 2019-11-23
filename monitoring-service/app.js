@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
 
 var indexRouter = require('./routes/index');
 var getTotalRouter = require('./routes/getTotal');
@@ -36,11 +37,13 @@ app.use('/getlastrequeststatus', getLastRequestStatusRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  log.error('404');
   next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
+  log.error('500');
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
