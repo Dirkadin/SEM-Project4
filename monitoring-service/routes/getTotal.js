@@ -29,7 +29,7 @@ router.get('/', function (req, res, next) {
     });
 
 
-    res.render('test', {title: 'Get Total', message: total});
+    res.render('test', {title: 'Total money earned $' + total, message: ''});
     total = 0;
 });
 

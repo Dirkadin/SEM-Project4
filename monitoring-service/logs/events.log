@@ -77,3 +77,8 @@
 09:00:14.200 INFO  cookie 
 09:00:14.200 INFO  2 
 09:00:14.200 INFO  6 
+10:12:32.071 INFO  GET /gettotal 
+10:13:06.802 INFO  GET /gettotal 
+10:13:47.535 INFO  GET /gettotal 
+10:13:50.677 INFO  GET /gettotal 
+10:14:29.729 INFO  GET /gettotal 

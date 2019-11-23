@@ -21,6 +21,7 @@ var cookie = {
 };
 
 router.get('/', function(req, res, next) {
+    log.info('GET /gettopseller');
     //reports back the item that has been purchases the greatest number of times
     var data = fs.readFileSync('./logs/orders.log');
     var content = data.toString();
