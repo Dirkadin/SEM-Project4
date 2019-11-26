@@ -4,11 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+const axios = require('axios');
 
 var indexRouter = require('./routes/index');
 var versionRouter = require('./routes/version');
 var getmenuRouter = require('./routes/getmenu');
-//var logsRouter = require('./routes/logs');
 
 const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
 const orders = require('simple-node-logger').createSimpleLogger('logs/orders.log');
@@ -33,20 +33,52 @@ app.use('/version', versionRouter);
 //app.use('/logs', logsRouter);
 app.use('/getmenu', getmenuRouter);
 
+var item;
+
 app.post('/purchase/:item/:quantity', function (req, res) {
-    console.log(req.params.item, req.params.quantity);
-    var item = req.params.item.toLowerCase();
+    //Call inventory service to check for item availability
+    // console.log(req.params.item, req.params.quantity);
+    item = req.params.item.toLowerCase();
     var quantity = req.params.quantity.toLowerCase();
 
     if (item === 'hotdog' || item === 'hamburger' || item === 'soda' || item === 'cookie') {
-        orders.info(item + ' ' + quantity);
-        res.sendStatus(200);
+        //call inventory
+        // let itemsRemaining = getItemsRemaining();
+        let itemsRemaining;
+        try {
+            itemsRemaining = axios.get('localhost:5002/getcount/' + item.toString())
+                .then(function (foo) {
+                    console.log("okay we're done: " + foo);
+                });
+        } catch (error) {
+            console.log(error);
+        }
+        // let itemsRemaining = axios.get('localhost:5002/getcount/' + item.toString());
+        console.log(itemsRemaining);
+        console.log(Number.parseInt(itemsRemaining));
+
+        if (itemsRemaining > quantity) {
+            //Reduce
+            res.sendStatus(202);
+        }
+
+
+
+
     } else {
-        res.sendStatus(400);
+        console.log("yut");
+        res.sendStatus(418);
     }
 
-
 });
+
+const getItemsRemaining = () => {
+    try {
+        return axios.get('localhost:5002/getcount/' + item.toString());
+    } catch (error) {
+        console.error(error);
+    }
+};
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
