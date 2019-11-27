@@ -15,7 +15,8 @@
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
-    "simple-node-logger": "^18.12.23"
+    "simple-node-logger": "^18.12.23",
+    "wait-promise": "^0.4.1"
   },
   "devDependencies": {
     "request": "^2.88.0"

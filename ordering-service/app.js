@@ -4,7 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-const axios = require('axios');
+const axios = require('axios').default;
+var wait = require('wait-promise');
 
 var indexRouter = require('./routes/index');
 var versionRouter = require('./routes/version');
@@ -33,6 +34,39 @@ app.use('/version', versionRouter);
 //app.use('/logs', logsRouter);
 app.use('/getmenu', getmenuRouter);
 
+async function getCount() {
+    try {
+        let res = await axios({
+            url: 'http://localhost:5002/getcount/' + item,
+            method: 'get',
+            timeout: '8000',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (res.status == 200) {
+            console.log(res.status);
+        }
+        return res.data.itemsInInventory;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const getThings = async () => {
+    try {
+        return await axios.get('http://localhost:5002/getcount/' + item);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+async function getCount() {
+    let json = await axios.get('http://localhost:5002/getcount/' + item);
+    console.log('after call to service');
+    return json;
+}
+
 var item;
 
 app.post('/purchase/:item/:quantity', function (req, res) {
@@ -43,42 +77,74 @@ app.post('/purchase/:item/:quantity', function (req, res) {
 
     if (item === 'hotdog' || item === 'hamburger' || item === 'soda' || item === 'cookie') {
         //call inventory
-        // let itemsRemaining = getItemsRemaining();
-        let itemsRemaining;
-        try {
-            itemsRemaining = axios.get('localhost:5002/getcount/' + item.toString())
-                .then(function (foo) {
-                    console.log("okay we're done: " + foo);
-                });
-        } catch (error) {
-            console.log(error);
+
+        console.log(item);
+        var itemsAvailable = 0;
+
+        // (async()=>{
+        //     let abc = await getCount();
+        //     console.log('>>>>>>>>>>> abc', abc.data.itemsInInventory);
+        // })();
+
+
+
+        // axios.get('http://localhost:5002/getcount/' + item)
+        //     .then(res => {
+        //         itemsAvailable = res.data.itemsInInventory;
+        //         console.log(res.data.itemsInInventory);
+        //     })
+        //     .catch(function(error) {
+        //         console.log("Error: " + error.message);
+        //     });
+
+        // axios.get('localhost:5002/getcount/' + item)
+        //     .then(function (response) {
+        //         // handle success
+        //         console.log(response);
+        //     })
+        //     .catch(function (error) {
+        //         // handle error
+        //         console.log(error);
+        //     })
+        //     .finally(function () {
+        //         // always executed
+        //     });
+
+        // itemsAvailable = wait.until(axios.get('http://localhost:5002/getcount/' + item)
+        //     .then(function (response) {
+        //         // handle success
+        //         console.log(response.data.itemsInInventory);
+        //     })
+        //     .catch(function (error) {
+        //         // handle error
+        //         console.log(error);
+        //     })
+        //     .finally(function () {
+        //         // always executed
+        //     }));
+
+        async function f() {
+
+            let promise = axios.get('http://localhost:5002/getcount/' + item);
+
+            let result = await promise; // wait until the promise resolves (*)
+
+            itemsAvailable = result.data.itemsInInventory; // "done!"
+            console.log("It's not stopping")
         }
-        // let itemsRemaining = axios.get('localhost:5002/getcount/' + item.toString());
-        console.log(itemsRemaining);
-        console.log(Number.parseInt(itemsRemaining));
+        f();
 
-        if (itemsRemaining > quantity) {
-            //Reduce
-            res.sendStatus(202);
-        }
-
-
-
-
+        console.log("Last: " + itemsAvailable);
+        res.sendStatus(418);
+        console.log('status sent')
     } else {
         console.log("yut");
-        res.sendStatus(418);
+        res.sendStatus(400);
     }
 
 });
 
-const getItemsRemaining = () => {
-    try {
-        return axios.get('localhost:5002/getcount/' + item.toString());
-    } catch (error) {
-        console.error(error);
-    }
-};
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
