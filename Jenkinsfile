@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Build Ordering') {
       steps {
-        sh 'ls -l'
+        sh 'ls -l /ordering-service'
         sh 'chmod +x /ordering-service/startup.sh'
         sh './ordering-service/startup.sh'
       }
