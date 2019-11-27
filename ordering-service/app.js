@@ -4,15 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-const axios = require('axios').default;
-var wait = require('wait-promise');
+const request = require("request");
 
 var indexRouter = require('./routes/index');
 var versionRouter = require('./routes/version');
 var getmenuRouter = require('./routes/getmenu');
 
-const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
-const orders = require('simple-node-logger').createSimpleLogger('logs/orders.log');
+// const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
+// const orders = require('simple-node-logger').createSimpleLogger('logs/orders.log');
 
 var app = express();
 
@@ -31,120 +30,32 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use('/', indexRouter);
 app.use('/version', versionRouter);
-//app.use('/logs', logsRouter);
 app.use('/getmenu', getmenuRouter);
 
-async function getCount() {
-    try {
-        let res = await axios({
-            url: 'http://localhost:5002/getcount/' + item,
-            method: 'get',
-            timeout: '8000',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (res.status == 200) {
-            console.log(res.status);
-        }
-        return res.data.itemsInInventory;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const getThings = async () => {
-    try {
-        return await axios.get('http://localhost:5002/getcount/' + item);
-    } catch (error) {
-        console.log(error);
-    }
-};
-
-async function getCount() {
-    let json = await axios.get('http://localhost:5002/getcount/' + item);
-    console.log('after call to service');
-    return json;
-}
-
 var item;
+var quantity;
 
 app.post('/purchase/:item/:quantity', function (req, res) {
-    //Call inventory service to check for item availability
-    // console.log(req.params.item, req.params.quantity);
     item = req.params.item.toLowerCase();
-    var quantity = req.params.quantity.toLowerCase();
+    quantity = req.params.quantity.toLowerCase();
 
-    if (item === 'hotdog' || item === 'hamburger' || item === 'soda' || item === 'cookie') {
-        //call inventory
+    const getCountURL = 'http://localhost:5002/getcount/' + item;
 
-        console.log(item);
-        var itemsAvailable = 0;
-
-        // (async()=>{
-        //     let abc = await getCount();
-        //     console.log('>>>>>>>>>>> abc', abc.data.itemsInInventory);
-        // })();
-
-
-
-        // axios.get('http://localhost:5002/getcount/' + item)
-        //     .then(res => {
-        //         itemsAvailable = res.data.itemsInInventory;
-        //         console.log(res.data.itemsInInventory);
-        //     })
-        //     .catch(function(error) {
-        //         console.log("Error: " + error.message);
-        //     });
-
-        // axios.get('localhost:5002/getcount/' + item)
-        //     .then(function (response) {
-        //         // handle success
-        //         console.log(response);
-        //     })
-        //     .catch(function (error) {
-        //         // handle error
-        //         console.log(error);
-        //     })
-        //     .finally(function () {
-        //         // always executed
-        //     });
-
-        // itemsAvailable = wait.until(axios.get('http://localhost:5002/getcount/' + item)
-        //     .then(function (response) {
-        //         // handle success
-        //         console.log(response.data.itemsInInventory);
-        //     })
-        //     .catch(function (error) {
-        //         // handle error
-        //         console.log(error);
-        //     })
-        //     .finally(function () {
-        //         // always executed
-        //     }));
-
-        async function f() {
-
-            let promise = axios.get('http://localhost:5002/getcount/' + item);
-
-            let result = await promise; // wait until the promise resolves (*)
-
-            itemsAvailable = result.data.itemsInInventory; // "done!"
-            console.log("It's not stopping")
+    request(getCountURL, (error, response, body) => {
+        let json = JSON.parse(body);
+        console.log(json.itemsInInventory);
+        if (json.itemsInInventory >= quantity) {
+            console.log('aasfd');
+            request.post({
+                url: 'http://localhost:5002/setcount/' + item + '/' + (json.itemsInInventory - quantity)
+            }, function (error, response, body) {
+                res.sendStatus(202);
+            })
+        } else {
+            res.sendStatus(418);
         }
-        f();
-
-        console.log("Last: " + itemsAvailable);
-        res.sendStatus(418);
-        console.log('status sent')
-    } else {
-        console.log("yut");
-        res.sendStatus(400);
-    }
-
+    });
 });
-
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
