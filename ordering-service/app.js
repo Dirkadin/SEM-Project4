@@ -42,6 +42,7 @@ app.post('/purchase/:item/:quantity', function (req, res) {
     const getCountURL = 'fake-inventory-service://fake-inventory-service:5002/getcount/' + item;
 
     request(getCountURL, (error, response, body) => {
+        console.log('Body: ' + body);
         let json = JSON.parse(body);
         console.log(json.itemsInInventory);
         if (json.itemsInInventory >= quantity) {
