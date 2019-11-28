@@ -10,8 +10,8 @@ var indexRouter = require('./routes/index');
 var versionRouter = require('./routes/version');
 var getmenuRouter = require('./routes/getmenu');
 
-// const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
-// const orders = require('simple-node-logger').createSimpleLogger('logs/orders.log');
+const log = require('simple-node-logger').createSimpleLogger('logs/events.log');
+const orders = require('simple-node-logger').createSimpleLogger('logs/orders.log');
 
 var app = express();
 
