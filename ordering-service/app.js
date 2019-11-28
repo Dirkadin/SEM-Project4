@@ -39,7 +39,7 @@ app.post('/purchase/:item/:quantity', function (req, res) {
     item = req.params.item.toLowerCase();
     quantity = req.params.quantity.toLowerCase();
 
-    const getCountURL = 'http://localhost:5002/getcount/' + item;
+    const getCountURL = 'fake-inventory-service://fake-inventory-service:5002/getcount/' + item;
 
     request(getCountURL, (error, response, body) => {
         let json = JSON.parse(body);
@@ -47,7 +47,7 @@ app.post('/purchase/:item/:quantity', function (req, res) {
         if (json.itemsInInventory >= quantity) {
             console.log('aasfd');
             request.post({
-                url: 'http://localhost:5002/setcount/' + item + '/' + (json.itemsInInventory - quantity)
+                url: 'fake-inventory-service://fake-inventory-service:5002/setcount/' + item + '/' + (json.itemsInInventory - quantity)
             }, function (error, response, body) {
                 res.sendStatus(202);
             })
