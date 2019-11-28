@@ -67,6 +67,7 @@ app.use(function (err, req, res, next) {
     log.warn('GET /error');
     // set locals, only providing error in development
     console.log(err.message);
+    console.log(err.body);
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
